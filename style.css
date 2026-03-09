@@ -1,0 +1,177 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Courier New', 'Lucida Console', monospace;
+    font-size: 14px;
+    background: #0a0a0a;
+    color: #b0b0b0;
+}
+
+#root {
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 0 20px 40px;
+}
+
+.lock-btn {
+    display: block;
+    margin: 12px auto 0;
+    padding: 6px 20px;
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #777;
+    border-radius: 0;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.lock-btn:hover {
+    border-color: #00ff41;
+    color: #00ff41;
+}
+
+#puzzle {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.combo {
+    position: absolute;
+    cursor: pointer;
+    font-weight: 700;
+    user-select: none;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    transform: rotate(var(--angle, 0deg));
+}
+
+.combo:hover {
+    opacity: 0.6;
+}
+
+.combo.used {
+    opacity: 0.3;
+	color: silver !important;
+    cursor: default;
+    pointer-events: none;
+}
+
+#display {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100% - 24px);
+    padding: 8px 18px;
+    background: rgba(0, 255, 65, 0.04);
+    border: 1px solid #1a3a1a;
+    border-radius: 0;
+    text-align: center;
+    z-index: 10;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+#display .label {
+    font-size: 0.8rem;
+    color: #3a6a3a;
+    margin-bottom: 4px;
+}
+
+#display .word {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #00ff41;
+}
+
+#display .placeholder {
+    color: #1a3a1a;
+}
+
+@media (max-width: 480px) {
+    #display {
+        bottom: 8px;
+        padding: 6px 12px;
+    }
+
+    #display .word {
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+    }
+}
+
+/* --- Ссылки --- */
+
+a {
+    color: #00cc33;
+    text-decoration: none;
+    border-bottom: 1px dashed #1a4a1a;
+}
+
+a:hover {
+    color: #00ff41;
+    border-bottom-color: #00ff41;
+}
+
+a:visited {
+    color: #708a70;
+    border-bottom-color: #2a3a2a;
+}
+
+/* --- Таблица скачивания файлов --- */
+
+table.df {
+    max-width: 800px;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+table.df th,
+table.df td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #1a2a1a;
+}
+
+table.df th {
+    color: #00cc33;
+    font-weight: 700;
+    border-bottom-color: #2a3a2a;
+}
+
+table.df tr:hover {
+    background: rgba(0, 255, 65, 0.03);
+}
+
+/* --- Блок кода --- */
+
+div.cd {
+    background: #0e0e0e;
+    border-left: 3px solid #1a3a1a;
+    padding: 12px 16px;
+    margin: 12px 0;
+    overflow-x: auto;
+}
+
+div.cd code {
+    color: #00ff41;
+    font-family: 'Courier New', 'Lucida Console', monospace;
+    font-size: 0.9rem;
+    white-space: pre;
+}
