@@ -122,6 +122,13 @@
 		return Math.min(24, Math.max(14, Math.min(vw / 30, vh / 20)));
 	}
 
+	function calcCols() {
+		var vw = window.innerWidth;
+		if (vw <= 400) return 3;
+		if (vw <= 600) return 4;
+		return 5;
+	}
+
 	function escapeHtml(str) {
 		var el = document.createElement('div');
 		el.textContent = str;
@@ -137,7 +144,7 @@
 
 		var shuffled = shuffle(combos);
 		var count = shuffled.length;
-		var cols = 5;
+		var cols = calcCols();
 		var rows = Math.ceil(count / cols);
 		var cellW = 96 / cols;
 		var cellH = 82 / rows;

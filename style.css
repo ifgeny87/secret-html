@@ -9,10 +9,11 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: 'Courier New', 'Lucida Console', monospace;
+    font-family: 'Lucida Console', monospace, 'Courier New', sans-serif;
     font-size: 14px;
     background: #0a0a0a;
     color: #b0b0b0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #root {
@@ -21,6 +22,7 @@ body {
     height: 100%;
     overflow: auto;
     padding: 0 20px 40px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .lock-btn {
@@ -57,6 +59,8 @@ body {
     letter-spacing: 2px;
     white-space: nowrap;
     transform: rotate(var(--angle, 0deg));
+    touch-action: manipulation;
+    padding: 2px;
 }
 
 .combo:hover {
@@ -65,7 +69,7 @@ body {
 
 .combo.used {
     opacity: 0.3;
-	color: silver !important;
+    color: silver !important;
     cursor: default;
     pointer-events: none;
 }
@@ -101,18 +105,6 @@ body {
 
 #display .placeholder {
     color: #1a3a1a;
-}
-
-@media (max-width: 480px) {
-    #display {
-        bottom: 8px;
-        padding: 6px 12px;
-    }
-
-    #display .word {
-        font-size: 1.1rem;
-        letter-spacing: 2px;
-    }
 }
 
 /* --- Ссылки --- */
@@ -167,11 +159,95 @@ div.cd {
     padding: 12px 16px;
     margin: 12px 0;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 div.cd code {
     color: #00ff41;
     font-family: 'Courier New', 'Lucida Console', monospace;
     font-size: 0.9rem;
-    white-space: pre;
+    /* white-space: ; */
+}
+
+/* --- Планшет --- */
+
+@media (max-width: 768px) {
+    #root {
+        padding: 0 16px 32px;
+    }
+
+    table.df th,
+    table.df td {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
+
+    div.cd {
+        padding: 10px 12px;
+    }
+
+    div.cd code {
+        font-size: 0.8rem;
+    }
+}
+
+/* --- Мобильный --- */
+
+@media (max-width: 480px) {
+    html,
+    body {
+        font-size: 13px;
+    }
+
+    #root {
+        padding: 0 10px 24px;
+    }
+
+    .lock-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+
+    .combo {
+        padding: 4px;
+    }
+
+    #display {
+        bottom: 6px;
+        padding: 6px 12px;
+        max-width: calc(100% - 16px);
+    }
+
+    #display .label {
+        font-size: 0.7rem;
+    }
+
+    #display .word {
+        font-size: 1rem;
+        letter-spacing: 2px;
+    }
+
+    table.df {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table.df th,
+    table.df td {
+        padding: 6px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    div.cd {
+        padding: 8px 10px;
+        margin: 8px 0;
+        border-left-width: 2px;
+    }
+
+    div.cd code {
+        font-size: 0.75rem;
+    }
 }
