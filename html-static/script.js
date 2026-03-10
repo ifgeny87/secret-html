@@ -2,7 +2,7 @@
 	'use strict';
 
 	var STORAGE_KEY = 'sk';
-	var secretPayload = null;
+	var secretItems = [];
 	var combos = [];
 	var word = '';
 	var comboData = [];
@@ -210,20 +210,24 @@
 	}
 
 	function checkSecret() {
-		if (!secretPayload) return;
+		if (!secretItems.length) return;
 
-		var crc = secretPayload.substring(0, 32);
 		var derived = deriveKey(word);
-
-		if (derived.hex === crc) {
-			locked = true;
-			var base64 = secretPayload.substring(32);
-			try {
-				var content = decrypt(base64, derived.bytes);
-				showContent(content);
-			} catch (e) {
-				locked = false;
+		var item = null;
+		for (var i = 0; i < secretItems.length; i++) {
+			if (secretItems[i].k === derived.hex) {
+				item = secretItems[i];
+				break;
 			}
+		}
+		if (!item) return;
+
+		locked = true;
+		try {
+			var content = decrypt(item.d, derived.bytes);
+			showContent(content);
+		} catch (e) {
+			locked = false;
 		}
 	}
 
@@ -268,14 +272,19 @@
 	function tryRestoreFromSession() {
 		try {
 			var saved = sessionStorage.getItem(STORAGE_KEY);
-			if (!saved || !secretPayload) return false;
+			if (!saved || !secretItems.length) return false;
 
-			var crc = secretPayload.substring(0, 32);
 			var derived = deriveKey(saved);
-			if (derived.hex !== crc) return false;
+			var item = null;
+			for (var i = 0; i < secretItems.length; i++) {
+				if (secretItems[i].k === derived.hex) {
+					item = secretItems[i];
+					break;
+				}
+			}
+			if (!item) return false;
 
-			var base64 = secretPayload.substring(32);
-			var content = decrypt(base64, derived.bytes);
+			var content = decrypt(item.d, derived.bytes);
 			word = saved;
 			locked = true;
 			showContent(content);
@@ -303,21 +312,65 @@
 		});
 	}
 
+	// --- Ошибка загрузки ---
+
+	function showLoadError(message) {
+		document.getElementById('puzzle').style.display = 'none';
+		document.getElementById('display').style.display = 'none';
+		var el = document.getElementById('error');
+		el.textContent = message;
+		el.className = 'error-placeholder error-placeholder_visible';
+	}
+
 	// --- Запуск ---
 
 	fetch('secret.json')
 		.then(function (r) {
+			if (!r.ok) {
+				throw new Error(`Не удалось загрузить пазл (${r.status} ${r.statusText})`);
+			}
 			return r.json();
 		})
 		.then(function (json) {
-			secretPayload = json.d;
-			combos = json.c;
+			if (!json) throw new Error('Некорректный формат пазл-файла');
+
+			if (typeof json.c === 'string') {
+				var list = [];
+				for (var i = 0; i < json.c.length; i += 2) list.push(json.c.substring(i, i + 2));
+				combos = list;
+			} else if (Array.isArray(json.c)) {
+				combos = json.c;
+			} else {
+				throw new Error('Некорректный формат пазл-файла (ожидается c: строка или массив)');
+			}
+
+			if (Array.isArray(json.items)) {
+				secretItems = [];
+				for (var j = 0; j < json.items.length; j++) {
+					var it = json.items[j];
+					if (typeof it === 'string' && it.length >= 32) {
+						secretItems.push({ k: it.substring(0, 32), d: it.substring(32) });
+					} else if (it && typeof it.k === 'string' && typeof it.d === 'string') {
+						secretItems.push(it);
+					} else {
+						throw new Error('Некорректный формат пазл-файла (item: строка или {k,d})');
+					}
+				}
+			} else if (typeof json.d === 'string' && json.d.length >= 32) {
+				secretItems = [{ k: json.d.substring(0, 32), d: json.d.substring(32) }];
+			} else {
+				throw new Error('Некорректный формат пазл-файла (ожидаются items или d)');
+			}
 			if (!tryRestoreFromSession()) {
 				init(combos);
 			}
 		})
-		.catch(function () {
-			init([]);
+		.catch(function (err) {
+			showLoadError(
+				err && err.message
+					? err.message
+					: 'Не удалось загрузить secret.json'
+			);
 		});
 
 	window.addEventListener('resize', onResize);

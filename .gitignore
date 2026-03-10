@@ -1,4 +1,6 @@
+dist/
 files/
 img/
+.test-data/
 secret_input.html
 secret.json
